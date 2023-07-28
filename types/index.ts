@@ -30,7 +30,6 @@ interface PokemonEvolution {
 export interface PokemonImage {
     sprite: string;
     thumbnail: string;
-    hires: string;
 }
 
 export interface Pokemon {

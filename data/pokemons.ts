@@ -9,7 +9,7 @@ export const pokemons = [
         },
         "type": [
             "Grass",
-            "Poison",
+            "Poison"
         ],
         "base": {
             "HP": 45,
@@ -49,9 +49,8 @@ export const pokemons = [
             "gender": "87.5:12.5"
         },
         "image": {
-            "sprite": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/sprites/001.png",
-            "thumbnail": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/thumbnails/001.png",
-            "hires": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/hires/001.png"
+            "sprite": "https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/main/public/images/pokemons-images/sprites/001.png",
+            "thumbnail": "https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/main/public/images/pokemons-images/thumbnails/001.png",
         }
     },
     {
@@ -108,9 +107,8 @@ export const pokemons = [
             "gender": "87.5:12.5"
         },
         "image": {
-            "sprite": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/sprites/002.png",
-            "thumbnail": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/thumbnails/002.png",
-            "hires": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/hires/002.png"
+            "sprite": "https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/main/public/images/pokemons-images/sprites/002.png",
+            "thumbnail": "https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/main/public/images/pokemons-images/thumbnails/002.png",
         }
     },
     {
@@ -161,9 +159,8 @@ export const pokemons = [
             "gender": "87.5:12.5"
         },
         "image": {
-            "sprite": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/sprites/003.png",
-            "thumbnail": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/thumbnails/003.png",
-            "hires": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/hires/003.png"
+            "sprite": "https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/main/public/images/pokemons-images/sprites/003.png",
+            "thumbnail": "https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/main/public/images/pokemons-images/thumbnails/003.png",
         }
     },
     {
@@ -215,9 +212,8 @@ export const pokemons = [
             "gender": "87.5:12.5"
         },
         "image": {
-            "sprite": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/sprites/004.png",
-            "thumbnail": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/thumbnails/004.png",
-            "hires": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/hires/004.png"
+            "sprite": "https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/main/public/images/pokemons-images/sprites/004.png",
+            "thumbnail": "https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/main/public/images/pokemons-images/thumbnails/004.png",
         }
     },
     {
@@ -273,9 +269,8 @@ export const pokemons = [
             "gender": "87.5:12.5"
         },
         "image": {
-            "sprite": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/sprites/005.png",
-            "thumbnail": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/thumbnails/005.png",
-            "hires": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/hires/005.png"
+            "sprite": "https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/main/public/images/pokemons-images/sprites/005.png",
+            "thumbnail": "https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/main/public/images/pokemons-images/thumbnails/005.png",
         }
     },
     {
@@ -326,9 +321,8 @@ export const pokemons = [
             "gender": "87.5:12.5"
         },
         "image": {
-            "sprite": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/sprites/006.png",
-            "thumbnail": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/thumbnails/006.png",
-            "hires": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/hires/006.png"
+            "sprite": "https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/main/public/images/pokemons-images/sprites/006.png",
+            "thumbnail": "https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/main/public/images/pokemons-images/thumbnails/006.png",
         }
     },
     {
@@ -380,9 +374,8 @@ export const pokemons = [
             "gender": "87.5:12.5"
         },
         "image": {
-            "sprite": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/sprites/007.png",
-            "thumbnail": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/thumbnails/007.png",
-            "hires": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/hires/007.png"
+            "sprite": "https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/main/public/images/pokemons-images/sprites/007.png",
+            "thumbnail": "https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/main/public/images/pokemons-images/thumbnails/007.png",
         }
     },
     {
@@ -438,9 +431,8 @@ export const pokemons = [
             "gender": "87.5:12.5"
         },
         "image": {
-            "sprite": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/sprites/008.png",
-            "thumbnail": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/thumbnails/008.png",
-            "hires": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/hires/008.png"
+            "sprite": "https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/main/public/images/pokemons-images/sprites/008.png",
+            "thumbnail": "https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/main/public/images/pokemons-images/thumbnails/008.png",
         }
     },
     {
@@ -490,9 +482,8 @@ export const pokemons = [
             "gender": "87.5:12.5"
         },
         "image": {
-            "sprite": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/sprites/009.png",
-            "thumbnail": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/thumbnails/009.png",
-            "hires": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/hires/009.png"
+            "sprite": "https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/main/public/images/pokemons-images/sprites/009.png",
+            "thumbnail": "https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/main/public/images/pokemons-images/thumbnails/009.png",
         }
     },
     {
@@ -543,9 +534,8 @@ export const pokemons = [
             "gender": "50:50"
         },
         "image": {
-            "sprite": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/sprites/010.png",
-            "thumbnail": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/thumbnails/010.png",
-            "hires": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/hires/010.png"
+            "sprite": "https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/main/public/images/pokemons-images/sprites/010.png",
+            "thumbnail": "https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/main/public/images/pokemons-images/thumbnails/010.png",
         }
     }
 ]

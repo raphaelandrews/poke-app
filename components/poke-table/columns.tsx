@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image";
 import { ColumnDef } from "@tanstack/react-table";
 import { Pokemon } from "@/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

@@ -16,6 +16,7 @@ export const columns: ColumnDef<Pokemon>[] = [
             <AvatarImage
               src={row?.original?.image.thumbnail}
               alt={row?.original?.name.english}
+              title={row?.original?.name.english}
               className="w-7 h-7"
             />
             <AvatarFallback>P</AvatarFallback>
@@ -31,16 +32,16 @@ export const columns: ColumnDef<Pokemon>[] = [
     cell: ({ row }) => {
       const { type } = row.original;
       return (
-        <div>
+        <div className="flex gap-1">
           {type.map((typeName) => (
-            <span key={typeName}>
-              <Image
-                src={`https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/443a858d2697936312b72fc3f5bb70de456d8789/public/images/pokemons-types-icons/${typeName.toLowerCase()}.svg`}
+            <Avatar key={typeName} className="w-5 h-5">
+              <AvatarImage
+                src={`https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/f47d73995f8fcc6a44f2848caeace9725454937b/public/images/pokemons-types-icons/${typeName.toLowerCase()}.svg`}
                 alt={typeName}
-                width={16}
-                height={16}
+                title={typeName}
               />
-            </span>
+              <AvatarFallback>T</AvatarFallback>
+            </Avatar>
           ))}
         </div>
       );

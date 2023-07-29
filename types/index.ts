@@ -19,7 +19,7 @@ export interface PokemonBaseStats {
 export interface PokemonProfile {
     height: string;
     weight: string;
-    egg: string[];
+    egg?: string[];
     ability: string[] | string[][];
     gender: string;
 }
@@ -38,7 +38,7 @@ export interface Pokemon {
     id: number;
     name: PokemonName;
     type: string[];
-    base: PokemonBaseStats;
+    base?: PokemonBaseStats;
     species: string;
     description: string;
     evolution: PokemonEvolution;

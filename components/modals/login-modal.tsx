@@ -47,11 +47,10 @@ const LoginModal = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true);
-
       signIn('credentials', {
         ...values,
         redirect: false,
-      })
+      })    
         .then((callback) => {
           setLoading(false);
 
@@ -59,17 +58,17 @@ const LoginModal = () => {
             toast({
               title: "Logged in",
             })
+          
             router.refresh();
             loginModal.onClose();
           }
-
           if (callback?.error) {
             toast({
               title: callback.error,
             })
           }
         });
-    } catch (error) {
+    } catch (error) {  
       toast({
         title: error instanceof Error ? error.message : "An error occurred",
       })

@@ -2,6 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 
+import getCurrentUser from '@/actions/get-current-user';
 import RegisterModal from '@/components/modals/register-modal';
 import LoginModal from '@/components/modals/login-modal';
 import Header from '@/components/header';
@@ -13,18 +14,20 @@ export const metadata: Metadata = {
   title: 'PokéTable',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const currentUser = await getCurrentUser();
+
   return (
     <html lang="en">
       <body className={inter.className}>
         <Toaster />
         <RegisterModal />
         <LoginModal />
-        <Header />
+        <Header currentUser={currentUser} />
         {children}
       </body>
     </html>

@@ -1,3 +1,5 @@
+import { User } from "@prisma/client";
+
 export interface PokemonName {
     english: string;
     japanese: string;
@@ -43,3 +45,12 @@ export interface Pokemon {
     profile: PokemonProfile;
     image: PokemonImage;
 }
+
+export type SafeUser = Omit<
+  User,
+  "createdAt" | "updatedAt" | "emailVerified"
+> & {
+  createdAt: string;
+  updatedAt: string;
+  emailVerified: string | null;
+};

@@ -4,18 +4,19 @@ import { pokemons } from "@/data/pokemons";
 
 export default function Home() {
   return (
-    <main className="container mx-auto py-10">
+    <main className="container min-h-screen">
       <h1
         className="
           text-2xl 
           md:text-3xl 
           font-bold 
           text-center 
-          mt-8 
+          mt-6
+          md:mt-8 
           leading-tight 
           lg:leading-[1.1] 
           tracking-tighter
-          "
+        "
       >
         Pokétable
       </h1>

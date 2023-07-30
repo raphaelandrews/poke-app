@@ -11,22 +11,22 @@ export interface PokemonBaseStats {
     HP: number;
     Attack: number;
     Defense: number;
-    "Sp. Attack": number;
-    "Sp. Defense": number;
+    SpAttack: number;
+    SpDefense: number;
     Speed: number;
 }
 
 export interface PokemonProfile {
-    height: string;
-    weight: string;
+    height: number;
+    weight: number;
     egg?: string[];
-    ability: string[] | string[][];
+    ability: string[];
     gender: string;
 }
 
 interface PokemonEvolution {
     prev?: string[];
-    next?: string[] | string[][];
+    next?: string[];
 }
 
 export interface PokemonImage {

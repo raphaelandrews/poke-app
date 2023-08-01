@@ -12,16 +12,18 @@ datasource db {
 
 model User {
   id             String    @id @default(auto()) @map("_id") @db.ObjectId
-  name           String?
+  name           String?   @unique
   email          String?   @unique
   emailVerified  DateTime?
-  image          String?
   hashedPassword String?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  accounts Account[]
-  pokemons Pokemon[]
+  avatarId String? @db.ObjectId
+  avatar   Avatar? @relation(fields: [avatarId], references: [id])
+
+  accounts       Account[]
+  caughtPokemons CaughtPokemon[]
 }
 
 model Account {
@@ -42,103 +44,94 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
+model Avatar {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+
+  users User[]
+}
+
+model CaughtPokemon {
+  id             String @id @default(auto()) @map("_id") @db.ObjectId
+  level          Int    @default(1)
+  xp             Int    @default(1)
+  hp             Int
+  attack         Int
+  defense        Int
+  specialAttack  Int
+  specialDefense Int
+  speed          Int
+
+  userId    String  @db.ObjectId
+  user      User    @relation(fields: [userId], references: [id])
+  pokemonId String  @db.ObjectId
+  pokemon   Pokemon @relation(fields: [pokemonId], references: [id])
+}
+
 model Pokemon {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  description String
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  name              String   @unique
+  description       String
+  height            Int
+  weight            Int
+  gender            String
+  level             Int      @default(1)
+  xp                Int      @default(1)
+  hp                Int
+  attack            Int
+  defense           Int
+  specialAttack     Int
+  specialDefense    Int
+  speed             Int
+  previousEvolution String[] @default([])
+  nextEvolution     String[] @default([])
+  sprite            String
+  thumbnail         String
 
-  base      PokemonBaseStats?
-  evolution PokemonEvolution?
-  profile   PokemonProfile?
-  image     PokemonImage?
-
-  typeId String[]      @db.ObjectId
-  type   PokemonType[] @relation(fields: [typeId], references: [id])
-
-  pokemonSpecieId String?        @db.ObjectId
-  PokemonSpecie   PokemonSpecie? @relation(fields: [pokemonSpecieId], references: [id])
-  userId          String         @db.ObjectId
-  user            User           @relation(fields: [userId], references: [id])
-}
-
-model PokemonBaseStats {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
-  Level         Int    @default(1)
-  XP            Int    @default(1)
-  HP            Int
-  MaximumAttack Int
-  MinimumAttack Int
-  Defense       Int
-  SpeedAttack   Int
-  SpeedDefense  Int
-  Speed         Int
-
-  pokemonId String  @unique @db.ObjectId
-  pokemon   Pokemon @relation(fields: [pokemonId], references: [id])
-}
-
-model PokemonProfile {
-  id     String @id @default(auto()) @map("_id") @db.ObjectId
-  height Int
-  weight Int
-  gender String
-
-  eggId     String[]         @db.ObjectId
-  egg       PokemonEgg[]     @relation(fields: [eggId], references: [id])
+  typeId    String[]         @db.ObjectId
+  types     PokemonType[]    @relation(fields: [typeId], references: [id])
+  eggId     String[]         @default([]) @db.ObjectId
+  eggs      PokemonEgg[]     @relation(fields: [eggId], references: [id])
   abilityId String[]         @db.ObjectId
-  ability   PokemonAbility[] @relation(fields: [abilityId], references: [id])
+  abilities PokemonAbility[] @relation(fields: [abilityId], references: [id])
 
-  pokemonId String  @unique @db.ObjectId
-  pokemon   Pokemon @relation(fields: [pokemonId], references: [id])
+  speciesId String?         @db.ObjectId
+  species   PokemonSpecies? @relation(fields: [speciesId], references: [id])
+
+  caughtPokemons CaughtPokemon[]
 }
 
 model PokemonEgg {
-  id     String  @id @default(auto()) @map("_id") @db.ObjectId
-  name   String
-  active Boolean @default(false)
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
 
-  pokemonProfileId String[]         @db.ObjectId
-  pokemonProfile   PokemonProfile[] @relation(fields: [pokemonProfileId], references: [id])
+  pokemonId String[]  @db.ObjectId
+  pokemons  Pokemon[] @relation(fields: [pokemonId], references: [id])
 }
 
 model PokemonAbility {
   id     String  @id @default(auto()) @map("_id") @db.ObjectId
-  name   String
+  name   String  @unique
   active Boolean @default(false)
 
-  pokemonProfileId String[]         @db.ObjectId
-  pokemonProfile   PokemonProfile[] @relation(fields: [pokemonProfileId], references: [id])
+  pokemonId String[]  @db.ObjectId
+  pokemons  Pokemon[] @relation(fields: [pokemonId], references: [id])
 }
 
-model PokemonSpecie {
+model PokemonSpecies {
   id   String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
+  name String @unique
 
   pokemons Pokemon[]
 }
 
 model PokemonType {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  name       String   @unique
+  resistance String[] @default([])
+  weakness   String[] @default([])
 
   pokemonId String[]  @db.ObjectId
-  pokemon   Pokemon[] @relation(fields: [pokemonId], references: [id])
+  pokemons  Pokemon[] @relation(fields: [pokemonId], references: [id])
 }
 
-model PokemonEvolution {
-  id   String   @id @default(auto()) @map("_id") @db.ObjectId
-  prev String[] @default([])
-  next String[] @default([])
-
-  pokemonId String  @unique @db.ObjectId
-  pokemon   Pokemon @relation(fields: [pokemonId], references: [id])
-}
-
-model PokemonImage {
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
-  sprite    String
-  thumbnail String
-
-  pokemonId String  @unique @db.ObjectId
-  pokemon   Pokemon @relation(fields: [pokemonId], references: [id])
-}

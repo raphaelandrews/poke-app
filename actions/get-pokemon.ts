@@ -1,42 +1,33 @@
-import { NextResponse } from "next/server";
-
 import prisma from "@/lib/prismadb";
+import { Pokemon, PokemonType } from "@prisma/client";
 
-export async function getPokemons() {
+interface PokemonWithTypes extends Pokemon {
+    types: PokemonType[];
+}
+
+export async function getPokemons(): Promise<PokemonWithTypes[]> {
     try {
-        const response = await prisma.pokemon.findMany({
+        const pokemons = await prisma.pokemon.findMany({
             include: {
-                types: {
-                    select: {
-                        id: true,
-                        name: true,
-                        resistance: true,
-                        weakness: true,
-                        pokemons: true,
-                    },
-                },
+                types: true,
                 eggs: true,
                 abilities: true,
                 species: true,
                 caughtPokemons: true,
             },
         });
-        console.log(response);
-        if (!response) {
-            return new NextResponse('Pokemon not found', { status: 404 });
-        }
 
-        return NextResponse.json(response);
-    } catch (error) {
-        return new NextResponse('Error fetching Pokemon', { status: 500 });
+        return pokemons;
+    } catch (error: any) {
+        throw new Error('Error fetching Pokemon', error);
     }
 }
 
-export async function getPokemon( { params }: { params: string }) {
-    const pokemonId  = params;
+export async function getPokemon({ params }: { params: string }) {
+    const pokemonId = params;
 
     try {
-        const response = await prisma.pokemon.findUnique({
+        const pokemon = await prisma.pokemon.findUnique({
             where: {
                 id: pokemonId,
             },
@@ -56,13 +47,13 @@ export async function getPokemon( { params }: { params: string }) {
                 caughtPokemons: true,
             },
         });
-        console.log(response);
-        if (!response) {
-            return new NextResponse('Pokemon not found', { status: 404 });
+
+        if (!pokemon) {
+            return null ;
         }
 
-        return NextResponse.json(response);
-    } catch (error) {
-        return new NextResponse('Error fetching Pokemon', { status: 500 });
+        return pokemon;
+    } catch (error: any) {
+        throw new Error('Error fetching Pokemon', error);
     }
 }

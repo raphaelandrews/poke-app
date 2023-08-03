@@ -1,18 +1,16 @@
+"use client"
+
 import { getPokemon } from "@/actions/get-pokemon";
 import { getPokemons } from "@/actions/get-pokemon";
 import { columns } from "@/components/poke-table/columns";
 import { DataTable } from "@/components/poke-table/data-table";
-import Poke from "./poke";
+import { Button } from "@/components/ui/button";
+import usePokemonModal from "@/hooks/use-create-pokemon-modal";
 
-export default async function Home() {
-  const pokemon = await getPokemon({ params: "64c879289fd56a347dd9f957" });
-  const pokemons = await getPokemons();
+export default function Home() {
+  {/*const pokemons = await getPokemons();*/ }
+  const PokemonModal = usePokemonModal();
 
-  if (!pokemon) {
-    return (
-      null
-    );
-  }
 
   return (
     <main className="container min-h-screen">
@@ -32,9 +30,11 @@ export default async function Home() {
         Pokétable
       </h1>
 
-      <Poke {...pokemon} />
+      <Button onClick={PokemonModal.onOpen}>
+        Create Pokemon
+      </Button>
 
-      <DataTable columns={columns} data={pokemons} />
+      {/*<DataTable columns={columns} data={pokemons} />*/}
     </main>
   )
 }

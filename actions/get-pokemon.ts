@@ -1,9 +1,5 @@
 import prisma from "@/lib/prismadb";
-import { Pokemon, PokemonType } from "@prisma/client";
-
-interface PokemonWithTypes extends Pokemon {
-    types: PokemonType[];
-}
+import { PokemonWithTypes } from "@/types";
 
 export async function getPokemons(): Promise<PokemonWithTypes[]> {
     try {
@@ -23,7 +19,7 @@ export async function getPokemons(): Promise<PokemonWithTypes[]> {
     }
 }
 
-export async function getPokemon({ params }: { params: string }) {
+export async function getPokemon(params: string) {
     const pokemonId = params;
 
     try {
@@ -41,15 +37,47 @@ export async function getPokemon({ params }: { params: string }) {
                         pokemons: true,
                     },
                 },
-                eggs: true,
-                abilities: true,
-                species: true,
-                caughtPokemons: true,
+                eggs: {
+                    select: {
+                        id: true,
+                        name: true,
+                        pokemons: true,
+                    },
+                },
+                abilities: {
+                    select: {
+                        id: true,
+                        name: true,
+                        pokemons: true,
+                    },
+                },
+                species: {
+                    select: {
+                        id: true,
+                        name: true,
+                        pokemons: true,
+                    },
+                },
+                caughtPokemons: {
+                    select: {
+                        id: true,
+                        level: true,
+                        xp: true,
+                        hp: true,
+                        attack: true,
+                        defense: true,
+                        specialAttack: true,
+                        specialDefense: true,
+                        speed: true,
+                        user: true,
+                        pokemon: true,
+                    },
+                },
             },
         });
 
         if (!pokemon) {
-            return null ;
+            return null;
         }
 
         return pokemon;

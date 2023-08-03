@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google';
 import getCurrentUser from '@/actions/get-current-user';
 import RegisterModal from '@/components/modals/register-modal';
 import LoginModal from '@/components/modals/login-modal';
+import CreatePokemonModal from '@/components/modals/create-pokemon-modal';
 import Header from '@/components/header';
 import { Toaster } from "@/components/ui/toaster";
 
@@ -27,6 +28,7 @@ export default async function RootLayout({
         <Toaster />
         <RegisterModal />
         <LoginModal />
+        <CreatePokemonModal />
         <Header currentUser={currentUser} />
         {children}
       </body>

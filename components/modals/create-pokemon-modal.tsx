@@ -55,15 +55,15 @@ const CreatePokemonModal = () => {
     defaultValues: {
       name: '',
       description: '',
-      height: 1,
-      weight: 1,
+      height: 0,
+      weight: 0,
       gender: '',
-      hp: 1,
-      attack: 1,
-      defense: 1,
-      specialAttack: 1,
-      specialDefense: 1,
-      speed: 1,
+      hp: 0,
+      attack: 0,
+      defense: 0,
+      specialAttack: 0,
+      specialDefense: 0,
+      speed: 0,
       previousEvolution: [''],
       nextEvolution: [''],
       sprite: '',
@@ -80,13 +80,13 @@ const CreatePokemonModal = () => {
       setLoading(true);
       const response = await axios.post('/api/pokemons', values)
       router.refresh();
-      console.log("resposta" + response);
+
       toast({
         title: "Pokemon registered",
       })
       createPokemonModal.onClose();
     } catch (error) {
-      console.log("resposta" +  error);
+
       toast({
         title: error instanceof Error ? error.message : "An error occurred",
       })

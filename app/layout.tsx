@@ -30,7 +30,9 @@ export default async function RootLayout({
         <LoginModal />
         <CreatePokemonModal />
         <Header currentUser={currentUser} />
-        {children}
+        <main className="container min-h-screen pb-10">
+          {children}
+        </main>
       </body>
     </html>
   )

@@ -63,42 +63,56 @@ model CaughtPokemon {
   speed          Int
 
   userId    String  @db.ObjectId
-  user      User    @relation(fields: [userId], references: [id])
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   pokemonId String  @db.ObjectId
-  pokemon   Pokemon @relation(fields: [pokemonId], references: [id])
+  pokemon   Pokemon @relation(fields: [pokemonId], references: [id], onDelete: Cascade)
 }
 
 model Pokemon {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
-  name              String   @unique
-  description       String
-  height            Int
-  weight            Int
-  gender            String
-  level             Int      @default(1)
-  xp                Int      @default(1)
-  hp                Int
-  attack            Int
-  defense           Int
-  specialAttack     Int
-  specialDefense    Int
-  speed             Int
-  previousEvolution String[] @default([])
-  nextEvolution     String[] @default([])
-  sprite            String
-  thumbnail         String
+  id             String @id @default(auto()) @map("_id") @db.ObjectId
+  name           String @unique
+  description    String
+  height         String
+  weight         String
+  level          Int    @default(1)
+  xp             Int    @default(1)
+  hp             Int
+  attack         Int
+  defense        Int
+  specialAttack  Int
+  specialDefense Int
+  speed          Int
+  sprite         String
+  thumbnail      String
 
-  typeId    String[]         @default([]) @db.ObjectId
-  types     PokemonType[]    @relation(fields: [typeId], references: [id])
-  eggId     String[]         @default([]) @db.ObjectId
-  eggs      PokemonEgg[]     @relation(fields: [eggId], references: [id])
-  abilityId String[]         @default([]) @db.ObjectId
-  abilities PokemonAbility[] @relation(fields: [abilityId], references: [id])
+  previousEvolution   Pokemon[] @relation("PokemonPreviousEvolution", fields: [nextEvolutionId], references: [id])
+  previousEvolutions  Pokemon[] @relation("PokemonPreviousEvolution", fields: [previousEvolutionId], references: [id])
+  previousEvolutionId String[]  @default([]) @db.ObjectId
 
-  speciesId String?         @db.ObjectId
-  species   PokemonSpecies? @relation(fields: [speciesId], references: [id])
+  nextEvolution   Pokemon[] @relation("PokemonNextEvolution", fields: [previousEvolutionId], references: [id])
+  nextEvolutions  Pokemon[] @relation("PokemonNextEvolution", fields: [nextEvolutionId], references: [id])
+  nextEvolutionId String[]  @default([]) @db.ObjectId
+
+  typeId       String[]            @default([]) @db.ObjectId
+  types        PokemonType[]       @relation(fields: [typeId], references: [id])
+  eggId        String[]            @default([]) @db.ObjectId
+  eggs         PokemonEgg[]        @relation(fields: [eggId], references: [id])
+  abilityId    String[]            @default([]) @db.ObjectId
+  abilities    PokemonAbility[]    @relation(fields: [abilityId], references: [id])
+
+  generationId String?            @db.ObjectId
+  generations  PokemonGeneration? @relation(fields: [generationId], references: [id], onDelete: Cascade)
+  speciesId    String?            @db.ObjectId
+  species      PokemonSpecies?    @relation(fields: [speciesId], references: [id], onDelete: Cascade)
 
   caughtPokemons CaughtPokemon[]
+}
+
+model PokemonGeneration {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  generation String
+
+  pokemons Pokemon[]
 }
 
 model PokemonEgg {
@@ -110,9 +124,8 @@ model PokemonEgg {
 }
 
 model PokemonAbility {
-  id     String  @id @default(auto()) @map("_id") @db.ObjectId
-  name   String  @unique
-  active Boolean @default(false)
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String @unique
 
   pokemonId String[]  @default([]) @db.ObjectId
   pokemons  Pokemon[] @relation(fields: [pokemonId], references: [id])
@@ -126,10 +139,16 @@ model PokemonSpecies {
 }
 
 model PokemonType {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  name       String   @unique
-  resistance String[] @default([])
-  weakness   String[] @default([])
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String @unique
+
+  resistance   PokemonType[] @relation("TypesResistance", fields: [weaknessId], references: [id])
+  resistances  PokemonType[] @relation("TypesResistance", fields: [resistanceId], references: [id])
+  resistanceId String[]      @default([]) @db.ObjectId
+
+  weakness   PokemonType[] @relation("Typesweakness", fields: [resistanceId], references: [id])
+  weaknesses PokemonType[] @relation("Typesweakness", fields: [weaknessId], references: [id])
+  weaknessId String[]      @default([]) @db.ObjectId
 
   pokemonId String[]  @default([]) @db.ObjectId
   pokemons  Pokemon[] @relation(fields: [pokemonId], references: [id])

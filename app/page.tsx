@@ -11,9 +11,8 @@ export default function Home() {
   {/*const pokemons = await getPokemons();*/ }
   const PokemonModal = usePokemonModal();
 
-
   return (
-    <main className="container min-h-screen">
+    <>
       <h1
         className="
           text-2xl 
@@ -35,6 +34,6 @@ export default function Home() {
       </Button>
 
       {/*<DataTable columns={columns} data={pokemons} />*/}
-    </main>
+    </>
   )
 }

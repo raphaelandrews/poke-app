@@ -11,7 +11,7 @@ export async function PUT(request: Request, { params }: { params: Params }) {
     const currentUser = await getCurrentUser();
 
     if (!currentUser) {
-        return new NextResponse('Unauthenticated', { status: 403 });
+        return new NextResponse('Unauthenticated', { status: 401 });
     }
 
     try {
@@ -22,20 +22,20 @@ export async function PUT(request: Request, { params }: { params: Params }) {
             description,
             height,
             weight,
-            gender,
             hp,
             attack,
             defense,
             specialAttack,
             specialDefense,
             speed,
-            previousEvolution,
-            nextEvolution,
             sprite,
             thumbnail,
+            previousEvolutionIds,
+            nextEvolutionIds,
             typeIds,
             eggIds,
             abilityIds,
+            generationId,
             speciesId,
         } = body;
 
@@ -51,17 +51,20 @@ export async function PUT(request: Request, { params }: { params: Params }) {
                 description,
                 height,
                 weight,
-                gender,
                 hp,
                 attack,
                 defense,
                 specialAttack,
                 specialDefense,
                 speed,
-                previousEvolution,
-                nextEvolution,
                 sprite,
                 thumbnail,
+                previousEvolutions: {
+                    connect: previousEvolutionIds.map((previousEvolutionId: string) => ({ id: previousEvolutionId })),
+                },
+                nextEvolutions: {
+                    connect: nextEvolutionIds.map((nextEvolutionId: string) => ({ id: nextEvolutionId })),
+                },
                 types: {
                     connect: typeIds.map((typeId: string) => ({ id: typeId })),
                 },
@@ -70,6 +73,9 @@ export async function PUT(request: Request, { params }: { params: Params }) {
                 },
                 abilities: {
                     connect: abilityIds.map((abilityId: string) => ({ id: abilityId })),
+                },
+                generations: {
+                    connect: { id: generationId },
                 },
                 species: {
                     connect: { id: speciesId },

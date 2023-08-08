@@ -1,87 +1,36 @@
-import prisma from "@/lib/prismadb";
-import { PokemonWithTypes } from "@/types";
+import { supabaseClient } from '@/utils/supabaseClient';
 
-export async function getPokemons(): Promise<PokemonWithTypes[]> {
-    try {
-        const pokemons = await prisma.pokemon.findMany({
-            include: {
-                types: true,
-                eggs: true,
-                abilities: true,
-                species: true,
-                caughtPokemons: true,
-            },
-        });
+export const getPokemons = async () => {
+    const supabase = supabaseClient();
 
-        return pokemons;
-    } catch (error: any) {
-        throw new Error('Error fetching Pokemon', error);
-    }
-}
+    const { data: Pokemons } = await supabase
+        .from('Pokemon')
+        .select(`
+        name,
+        PokemonType ( * ),
+        PokemonGeneration ( * ),
+        Pokemon: next_first_evolution_id ( name ), 
+        previous_first_evolution_id ( name )
+        `);
 
-export async function getPokemon(params: string) {
-    const pokemonId = params;
+    console.log("oi");
+    console.log(Pokemons);
+    return Pokemons;
+};
 
-    try {
-        const pokemon = await prisma.pokemon.findUnique({
-            where: {
-                id: pokemonId,
-            },
-            include: {
-                types: {
-                    select: {
-                        id: true,
-                        name: true,
-                        resistance: true,
-                        weakness: true,
-                        pokemons: true,
-                    },
-                },
-                eggs: {
-                    select: {
-                        id: true,
-                        name: true,
-                        pokemons: true,
-                    },
-                },
-                abilities: {
-                    select: {
-                        id: true,
-                        name: true,
-                        pokemons: true,
-                    },
-                },
-                species: {
-                    select: {
-                        id: true,
-                        name: true,
-                        pokemons: true,
-                    },
-                },
-                caughtPokemons: {
-                    select: {
-                        id: true,
-                        level: true,
-                        xp: true,
-                        hp: true,
-                        attack: true,
-                        defense: true,
-                        specialAttack: true,
-                        specialDefense: true,
-                        speed: true,
-                        user: true,
-                        pokemon: true,
-                    },
-                },
-            },
-        });
+export const getPokemon = async (pokemonId: string) => {
+    const supabase = supabaseClient();
 
-        if (!pokemon) {
-            return null;
-        }
+    const { data: Pokemons } = await supabase
+        .from('Pokemon')
+        .select('*')
+        .match({ id: pokemonId });
 
-        return pokemon;
-    } catch (error: any) {
-        throw new Error('Error fetching Pokemon', error);
-    }
-}
+    const { data: PokemonEvolutions } = await supabase
+        .from('_PokemonEvolutions')
+        .select('previousEvolutionId')
+        .match({ id: pokemonId });
+
+    console.log(Pokemons);
+    return Pokemons;
+};

@@ -1,17 +1,18 @@
 import { NextResponse } from "next/server";
+import { auth } from '@clerk/nextjs';
+
 import prisma from "@/lib/prismadb";
-import getCurrentUser from "@/actions/get-current-user";
 
 export async function POST(request: Request) {
-    const currentUser = await getCurrentUser();
+    const { userId } = auth();
 
-    if (!currentUser) {
-        return new NextResponse('Unauthenticated', { status: 401 });
+    if (!userId) {
+        return new NextResponse("Unauthenticated", { status: 403 });
     }
 
     try {
         const body = await request.json();
-        
+
         const {
             name,
             resistanceIds,
@@ -22,14 +23,14 @@ export async function POST(request: Request) {
             data: {
                 name,
                 resistances: {
-                    connect:  resistanceIds.map((resistanceId: string) => ({ id: resistanceId })),
+                    connect: resistanceIds.map((resistanceId: string) => ({ id: resistanceId })),
                 },
                 weaknesses: {
-                    connect:  weaknessIds.map((weaknessId: string) => ({ id: weaknessId })),
+                    connect: weaknessIds.map((weaknessId: string) => ({ id: weaknessId })),
                 },
             },
         });
-        
+
         return NextResponse.json(createPokemonType);
     } catch (error) {
         console.log(error);

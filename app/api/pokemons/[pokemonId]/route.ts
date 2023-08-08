@@ -1,18 +1,19 @@
 import { NextResponse } from "next/server";
+import { auth } from '@clerk/nextjs';
 
 import prisma from "@/lib/prismadb";
-import getCurrentUser from "@/actions/get-current-user";
 
 interface Params {
     pokemonId: string;
 }
 
 export async function PUT(request: Request, { params }: { params: Params }) {
-    const currentUser = await getCurrentUser();
+    const { userId } = auth();
 
-    if (!currentUser) {
-        return new NextResponse('Unauthenticated', { status: 401 });
+    if (!userId) {
+        return new NextResponse("Unauthenticated", { status: 403 });
     }
+
 
     try {
         const body = await request.json();

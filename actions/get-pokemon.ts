@@ -50,30 +50,30 @@ export const getPokemon = async (pokemonId: string) => {
     return Pokemons;
 };
 
-export const getTypeWeaknessesAndResistances = async (attackingTypeId: string) => {
+export const getTypeInteractions = async (typeId: string) => {
     const supabase = supabaseClient();
 
     const { data, error } = await supabase
         .from('PokemonTypeInterations')
         .select('interaction_type_id, interaction_type, PokemonType: interaction_type_id ( name )')
-        .eq('type_id ( PokemonType ( name ) )', attackingTypeId);
+        .eq('type_id ( PokemonType ( name ) )', typeId);
 
     if (error) {
         console.error('Error fetching type interactions:', error);
         return null;
     }
-console.log(data)
+
     const weaknesses: any[] = [];
     const resistances: any[] = [];
 
     data.forEach((interaction) => {
-        if (interaction.interaction_type === false) {
-            weaknesses.push({interaction_id: interaction.interaction_type_id, interaction_name: interaction.PokemonType});
-        } else if (interaction.interaction_type === true) {
-            resistances.push(interaction.interaction_type_id);
+        if (interaction.interaction_type === true) {
+            resistances.push({ interaction_name: interaction.PokemonType });
+        } else if (interaction.interaction_type === false) {
+            weaknesses.push({ interaction_name: interaction.PokemonType });
         }
     });
-console.log(weaknesses, resistances);
+
     return {
         weaknesses,
         resistances,

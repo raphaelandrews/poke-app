@@ -9,7 +9,8 @@ import usePokemonModal from "@/hooks/use-create-pokemon-modal";
 import { useAuth } from '@clerk/clerk-react';
 import { supabaseClientAuth } from '@/utils/supabaseClient';
 import { useState } from "react";
-import { getPokemons, getPokemonTypes, getTypeWeaknessesAndResistances } from "@/actions/get-pokemon";
+import { getPokemons, getPokemonTypes, getTypeInteractions } from "@/actions/get-pokemon";
+import { getPokemonTypesWithInteractions } from "@/actions/get-pokemon-types";
 
 export default function Home() {
   {/*const pokemons = await getPokemons();*/ }
@@ -46,7 +47,8 @@ export default function Home() {
 
   //const getPoke = getPokemons();
   //const getPokeType = getPokemonTypes();
-  const getPokeTypeRW = getTypeWeaknessesAndResistances('1f365c9f-37e9-472b-b04b-cd45420d1566');
+ // const getPokeTypeRW = getTypeInteractions('1f365c9f-37e9-472b-b04b-cd45420d1566');
+const Pokes = getPokemonTypesWithInteractions()
 
   return (
     <>
@@ -66,7 +68,7 @@ export default function Home() {
         Pokétable
       </h1>
 
-      <Button onClick={() => getPokeTypeRW}>
+      <Button onClick={() => Pokes}>
         Create Pokemon
       </Button>
       {pokemon?.map((p) => (

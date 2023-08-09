@@ -6,3 +6,24 @@ export interface PokemonTypesWithInteractions {
         }[];
     }[];
 }
+
+export interface Avatars {
+    id: number;
+    url: string;
+}
+
+export interface PokemonAbilities {
+    name: string;
+}
+
+export interface PokemonEggs {
+    name: string;
+}
+
+export interface PokemonGenerations {
+    generation: string;
+}
+
+export interface PokemonSpecies {
+    name: string;
+}

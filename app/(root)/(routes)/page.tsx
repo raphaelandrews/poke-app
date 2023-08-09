@@ -10,7 +10,7 @@ import { useAuth } from '@clerk/clerk-react';
 import { supabaseClientAuth } from '@/utils/supabaseClient';
 import { useState } from "react";
 import { getPokemons, getPokemonTypes, getTypeInteractions } from "@/actions/get-pokemon";
-import { getPokemonTypesWithInteractions } from "@/actions/get-pokemon-types";
+import { getPokemonSpecies } from "@/actions/get-pokemon-species";
 
 export default function Home() {
   {/*const pokemons = await getPokemons();*/ }
@@ -48,7 +48,7 @@ export default function Home() {
   //const getPoke = getPokemons();
   //const getPokeType = getPokemonTypes();
  // const getPokeTypeRW = getTypeInteractions('1f365c9f-37e9-472b-b04b-cd45420d1566');
-const Pokes = getPokemonTypesWithInteractions()
+const pokes = getPokemonSpecies()
 
   return (
     <>
@@ -68,11 +68,11 @@ const Pokes = getPokemonTypesWithInteractions()
         Pokétable
       </h1>
 
-      <Button onClick={() => Pokes}>
+      <Button onClick={() => pokes}>
         Create Pokemon
       </Button>
       {pokemon?.map((p) => (
-        <div key={p.name}>{p.name}{p.id}</div>
+        <div key={p.url}>{p.url}</div>
       ))}
       {/*<DataTable columns={columns} data={pokemons} />*/}
     </>

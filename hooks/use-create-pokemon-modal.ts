@@ -1,15 +1,16 @@
 import { create } from 'zustand';
 
-interface LoginModalStore {
+interface CreatePokemonModalStore {
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
 }
 
-const useLoginModal = create<LoginModalStore>((set) => ({
+const usePokemonModal = create<CreatePokemonModalStore>((set) => ({
   isOpen: false,
   onOpen: () => set({ isOpen: true }),
   onClose: () => set({ isOpen: false })
 }));
 
-export default useLoginModal;
+
+export default usePokemonModal;

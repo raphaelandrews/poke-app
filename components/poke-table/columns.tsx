@@ -13,7 +13,6 @@ export const columns: ColumnDef<PokemonWithTypes>[] = [
     accessorKey: "name",
     header: "Name",
     cell: ({ row }) => {
-      console.log(row?.original?.thumbnail);
       return (
         <div className="flex items-center gap-3">
           <Avatar className="w-7 h-7 rounded-none">

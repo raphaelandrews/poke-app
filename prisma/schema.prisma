@@ -1,58 +1,36 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "cockroachdb"
   url      = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
-model User {
-  id             String    @id @default(auto()) @map("_id") @db.ObjectId
-  name           String?   @unique
-  email          String?   @unique
-  emailVerified  DateTime?
-  hashedPassword String?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+model Trainer {
+  id     String @id @default(uuid())
+  userId String
+  name   String @unique
 
-  avatarId String? @db.ObjectId
-  avatar   Avatar? @relation(fields: [avatarId], references: [id])
+  avatarId String?
+  avatar   Avatar? @relation(fields: [avatarId], references: [id], onDelete: Cascade)
 
-  accounts       Account[]
   caughtPokemons CaughtPokemon[]
-}
 
-model Account {
-  id                String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String  @db.ObjectId
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.String
-  access_token      String? @db.String
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.String
-  session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
+  @@index([avatarId])
+  @@index([userId])
 }
 
 model Avatar {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
+  id     String @id @default(uuid())
+  avatar String
 
-  users User[]
+  trainers Trainer[]
 }
 
 model CaughtPokemon {
-  id             String @id @default(auto()) @map("_id") @db.ObjectId
+  id             String @id @default(uuid())
   level          Int    @default(1)
   xp             Int    @default(1)
   hp             Int
@@ -62,76 +40,83 @@ model CaughtPokemon {
   specialDefense Int
   speed          Int
 
-  userId    String  @db.ObjectId
-  user      User    @relation(fields: [userId], references: [id])
-  pokemonId String  @db.ObjectId
-  pokemon   Pokemon @relation(fields: [pokemonId], references: [id])
+  pokemonId String
+  pokemon   Pokemon @relation(fields: [pokemonId], references: [id], onDelete: Cascade)
+
+  trainer Trainer[]
+
+  @@index([pokemonId])
 }
 
 model Pokemon {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
-  name              String   @unique
-  description       String
-  height            Int
-  weight            Int
-  gender            String
-  level             Int      @default(1)
-  xp                Int      @default(1)
-  hp                Int
-  attack            Int
-  defense           Int
-  specialAttack     Int
-  specialDefense    Int
-  speed             Int
-  previousEvolution String[] @default([])
-  nextEvolution     String[] @default([])
-  sprite            String
-  thumbnail         String
+  id             String @id @default(uuid())
+  name           String @unique
+  description    String 
+  height         String 
+  weight         String 
+  level          Int    @default(1)
+  xp             Int    @default(1)
+  hp             Int
+  attack         Int
+  defense        Int
+  specialAttack  Int
+  specialDefense Int
+  speed          Int
+  sprite         String
+  thumbnail      String
 
-  typeId    String[]         @db.ObjectId
-  types     PokemonType[]    @relation(fields: [typeId], references: [id])
-  eggId     String[]         @default([]) @db.ObjectId
-  eggs      PokemonEgg[]     @relation(fields: [eggId], references: [id])
-  abilityId String[]         @db.ObjectId
-  abilities PokemonAbility[] @relation(fields: [abilityId], references: [id])
+  previousEvolutions Pokemon[] @relation("PokemonEvolutions")
+  nextEvolutions     Pokemon[] @relation("PokemonEvolutions")
 
-  speciesId String?         @db.ObjectId
-  species   PokemonSpecies? @relation(fields: [speciesId], references: [id])
+  types     PokemonType[]
+  eggs      PokemonEgg[]
+  abilities PokemonAbility[]
+
+  generationId String
+  generations  PokemonGeneration @relation(fields: [generationId], references: [id], onDelete: Cascade)
+  speciesId    String
+  species      PokemonSpecies    @relation(fields: [speciesId], references: [id], onDelete: Cascade)
 
   caughtPokemons CaughtPokemon[]
+
+  @@index([generationId])
+  @@index([speciesId])
+}
+
+model PokemonType {
+  id   String @id @default(uuid())
+  name String @unique 
+
+  resistances PokemonType[] @relation("ResistanceWeakness")
+  weaknesses  PokemonType[] @relation("ResistanceWeakness")
+
+  pokemons Pokemon[]
 }
 
 model PokemonEgg {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
-
-  pokemonId String[]  @db.ObjectId
-  pokemons  Pokemon[] @relation(fields: [pokemonId], references: [id])
-}
-
-model PokemonAbility {
-  id     String  @id @default(auto()) @map("_id") @db.ObjectId
-  name   String  @unique
-  active Boolean @default(false)
-
-  pokemonId String[]  @db.ObjectId
-  pokemons  Pokemon[] @relation(fields: [pokemonId], references: [id])
-}
-
-model PokemonSpecies {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  id   String @id @default(uuid())
   name String @unique
 
   pokemons Pokemon[]
 }
 
-model PokemonType {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  name       String   @unique
-  resistance String[] @default([])
-  weakness   String[] @default([])
+model PokemonAbility {
+  id   String @id @default(uuid())
+  name String @unique
 
-  pokemonId String[]  @db.ObjectId
-  pokemons  Pokemon[] @relation(fields: [pokemonId], references: [id])
+  pokemons Pokemon[]
 }
 
+model PokemonGeneration {
+  id         String @id @default(uuid())
+  generation String @unique
+
+  pokemons Pokemon[]
+}
+
+model PokemonSpecies {
+  id   String @id @default(uuid())
+  name String @unique
+
+  pokemons Pokemon[]
+}

@@ -1,35 +1,15 @@
-'use client'
+import { UserButton, auth } from "@clerk/nextjs";
 
-import useRegisterModal from "@/hooks/use-register-modal";
-import useLoginModal from "@/hooks/use-login-modal";
-import { Button } from "@/components/ui/button";
-import { SafeUser } from "@/types";
-
-interface HeaderProps {
-    currentUser?: SafeUser | null;
-}
-
-const Header: React.FC<HeaderProps> = ({ currentUser }) => {
-    const registerModal = useRegisterModal();
-    const loginModal = useLoginModal();
+const Header = () => {
+    const { userId } = auth();
 
     return (
         <header className="container flex justify-end gap-4 py-8">
-            {currentUser ?
-                <Button>
-                    Hello {currentUser.name}
-                </Button>
+            {userId ?
+                <UserButton />
                 :
-                <>
-                    <Button variant="secondary" onClick={() => loginModal.onOpen()}>
-                        Login
-                    </Button>
-                    <Button onClick={() => registerModal.onOpen()}>
-                        Register
-                    </Button>
-                </>
+                <UserButton afterSignOutUrl="/" />
             }
-
         </header>
     );
 }

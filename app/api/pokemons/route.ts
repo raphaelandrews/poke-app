@@ -1,66 +1,81 @@
 import { NextResponse } from "next/server";
+import { auth } from '@clerk/nextjs';
 
 import prisma from "@/lib/prismadb";
-import getCurrentUser from "@/actions/get-current-user";
 
-import { Pokemon } from "@/types";
-
-export async function GET(request: Request) {
-    try {
-        const response = await prisma.pokemon.findMany({
-            include: {
-                types: true,
-                eggs: true,
-                abilities: true,
-                species: true,
-                caughtPokemons: true,
-            },
-        });
-
-        if (!response) {
-            return new NextResponse('Pokemon not found', { status: 404 });
-        }
-
-        return NextResponse.json(response);
-    } catch (error) {
-        return new NextResponse('Error fetching Pokemon', { status: 500 });
-    }
-}
-
-/*
 export async function POST(request: Request) {
-    const currentUser = await getCurrentUser();
+    const { userId } = auth();
 
-    if (!currentUser) {
-        return new NextResponse('Unauthenticated', { status: 403 });
+    if (!userId) {
+        return new NextResponse("Unauthenticated", { status: 403 });
     }
 
     try {
         const body = await request.json();
+console.log(body)
+        const {
+            name,
+            description,
+            height,
+            weight,
+            hp,
+            attack,
+            defense,
+            specialAttack,
+            specialDefense,
+            speed,
+            sprite,
+            thumbnail,
+            previousEvolutionIds,
+            nextEvolutionIds,
+            typeIds,
+            eggIds,
+            abilityIds,
+            generationId,
+            speciesId,
+        } = body;
 
-        const newPokemonData = {
-            name: body.name,
-            description: body.description,
-            user: body.user,
-        };
-
-        const createdPokemon = await prisma.pokemon.create({
+        const createPokemon = await prisma.pokemon.create({
             data: {
-                ...newPokemonData,
-            },
-            include: {
-                base: true,
-                profile: true,
-                evolution: true,
-                image: true,
-                type: true,
-                pokemonSpecie: true,
-                user: true,
+                name,
+                description,
+                height,
+                weight,
+                hp,
+                attack,
+                defense,
+                specialAttack,
+                specialDefense,
+                speed,
+                sprite,
+                thumbnail,
+                previousEvolutions: {
+                    connect: previousEvolutionIds.map((previousEvolutionId: string) => ({ id: previousEvolutionId })),
+                },
+                nextEvolutions: {
+                    connect: nextEvolutionIds.map((nextEvolutionId: string) => ({ id: nextEvolutionId })),
+                },
+                types: {
+                    connect: typeIds.map((typeId: string) => ({ id: typeId })),
+                },
+                eggs: {
+                    connect: eggIds.map((eggId: string) => ({ id: eggId })),
+                },
+                abilities: {
+                    connect: abilityIds.map((abilityId: string) => ({ id: abilityId })),
+                },
+                generations: {
+                    connect: { id: generationId },
+                },
+                species: {
+                    connect: { id: speciesId },
+                },
             },
         });
 
-        return NextResponse.json(createdPokemon);
+        return NextResponse.json(createPokemon);
     } catch (error) {
+        console.log(error);
         return new NextResponse('Error creating Pokemon', { status: 500 });
     }
-}*/
+}

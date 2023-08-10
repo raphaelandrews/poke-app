@@ -1,59 +1,48 @@
-import prisma from "@/lib/prismadb";
-import { Pokemon, PokemonType } from "@prisma/client";
+import { supabaseClient } from '@/utils/supabaseClient';
 
-interface PokemonWithTypes extends Pokemon {
-    types: PokemonType[];
-}
+export const getPokemon = async (pokemonId: string) => {
+    const supabase = supabaseClient();
 
-export async function getPokemons(): Promise<PokemonWithTypes[]> {
-    try {
-        const pokemons = await prisma.pokemon.findMany({
-            include: {
-                types: true,
-                eggs: true,
-                abilities: true,
-                species: true,
-                caughtPokemons: true,
-            },
-        });
+    const { data: Pokemons } = await supabase
+        .from('Pokemon')
+        .select('*')
+        .match({ id: pokemonId });
 
-        return pokemons;
-    } catch (error: any) {
-        throw new Error('Error fetching Pokemon', error);
+    const { data: PokemonEvolutions } = await supabase
+        .from('_PokemonEvolutions')
+        .select('previousEvolutionId')
+        .match({ id: pokemonId });
+
+    console.log(Pokemons);
+    return Pokemons;
+};
+
+export const getTypeInteractions = async (typeId: string) => {
+    const supabase = supabaseClient();
+
+    const { data, error } = await supabase
+        .from('PokemonTypeInterations')
+        .select('interaction_type_id, interaction_type, PokemonType: interaction_type_id ( name )')
+        .eq('type_id ( PokemonType ( name ) )', typeId);
+
+    if (error) {
+        console.error('Error fetching type interactions:', error);
+        return null;
     }
-}
 
-export async function getPokemon({ params }: { params: string }) {
-    const pokemonId = params;
+    const weaknesses: any[] = [];
+    const resistances: any[] = [];
 
-    try {
-        const pokemon = await prisma.pokemon.findUnique({
-            where: {
-                id: pokemonId,
-            },
-            include: {
-                types: {
-                    select: {
-                        id: true,
-                        name: true,
-                        resistance: true,
-                        weakness: true,
-                        pokemons: true,
-                    },
-                },
-                eggs: true,
-                abilities: true,
-                species: true,
-                caughtPokemons: true,
-            },
-        });
-
-        if (!pokemon) {
-            return null ;
+    data.forEach((interaction) => {
+        if (interaction.interaction_type === true) {
+            resistances.push({ interaction_name: interaction.PokemonType });
+        } else if (interaction.interaction_type === false) {
+            weaknesses.push({ interaction_name: interaction.PokemonType });
         }
+    });
 
-        return pokemon;
-    } catch (error: any) {
-        throw new Error('Error fetching Pokemon', error);
-    }
+    return {
+        weaknesses,
+        resistances,
+    };
 }

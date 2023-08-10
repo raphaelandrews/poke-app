@@ -1,20 +1,17 @@
 "use client"
 
+import { useState } from "react";
+import { useAuth } from '@clerk/clerk-react';
+import { supabaseClientAuth } from '@/utils/supabaseClient';
+
 import { columns } from "@/components/poke-table/columns";
 import { DataTable } from "@/components/poke-table/data-table";
 import { Button } from "@/components/ui/button";
 import usePokemonModal from "@/hooks/use-create-pokemon-modal";
 
-import { useAuth } from '@clerk/clerk-react';
-import { supabaseClientAuth } from '@/utils/supabaseClient';
-import { useState } from "react";
-import { getPokemonTypes, getTypeInteractions } from "@/actions/get-pokemon";
-import { getPokemonSpecies } from "@/actions/get-pokemon-species";
-import { getTrainers } from "@/actions/get-trainers";
+import { getCaughtPokemons } from "@/actions/get-caught-pokemons";
 
 export default function Home() {
-  {/*const pokemons = await getPokemons();*/ }
-  const PokemonModal = usePokemonModal();
   const { getToken } = useAuth();
   const [pokemon, setPokemon] = useState<any[] | null>([])
   const fetchData = async () => {
@@ -31,24 +28,7 @@ export default function Home() {
     }))
   };
 
-  const fetchData2 = async () => {
-    const supabaseAccessToken = await getToken({ template: 'supabase' });
-    const supabase = await supabaseClientAuth(supabaseAccessToken);
-    const { data, error } = await supabase.from('Pokemon')
-      .select('*')
-    console.log(data)
-    setPokemon(data);
-    if (!data) return [];
-
-    return data.map((item) => ({
-      ...item.name
-    }))
-  };
-
-  //const getPoke = getPokemons();
-  //const getPokeType = getPokemonTypes();
- // const getPokeTypeRW = getTypeInteractions('1f365c9f-37e9-472b-b04b-cd45420d1566');
-const pokes = getTrainers()
+const pokes = getCaughtPokemons();
 
   return (
     <>

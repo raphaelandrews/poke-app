@@ -15,6 +15,6 @@ export const getTrainers = async (): Promise<Trainers[]> => {
     if (error) {
         console.error('Error fetching abilities:', error);
     }
-console.log(data)
+
     return data || [];
 }

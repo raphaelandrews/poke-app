@@ -1,6 +1,5 @@
 "use client"
 
-import { getPokemon } from "@/actions/get-pokemons";
 import { columns } from "@/components/poke-table/columns";
 import { DataTable } from "@/components/poke-table/data-table";
 import { Button } from "@/components/ui/button";
@@ -9,8 +8,9 @@ import usePokemonModal from "@/hooks/use-create-pokemon-modal";
 import { useAuth } from '@clerk/clerk-react';
 import { supabaseClientAuth } from '@/utils/supabaseClient';
 import { useState } from "react";
-import { getPokemons, getPokemonTypes, getTypeInteractions } from "@/actions/get-pokemon";
+import { getPokemonTypes, getTypeInteractions } from "@/actions/get-pokemon";
 import { getPokemonSpecies } from "@/actions/get-pokemon-species";
+import { getTrainers } from "@/actions/get-trainers";
 
 export default function Home() {
   {/*const pokemons = await getPokemons();*/ }
@@ -48,7 +48,7 @@ export default function Home() {
   //const getPoke = getPokemons();
   //const getPokeType = getPokemonTypes();
  // const getPokeTypeRW = getTypeInteractions('1f365c9f-37e9-472b-b04b-cd45420d1566');
-const pokes = getPokemonSpecies()
+const pokes = getTrainers()
 
   return (
     <>

@@ -7,9 +7,7 @@ export const getAvatars = async (): Promise<Avatars[]> => {
 
     const { data, error } = await supabase
         .from('avatars')
-        .select(`
-            url
-        `);
+        .select('*');
 
     if (error) {
         console.error('Error fetching avatars:', error);

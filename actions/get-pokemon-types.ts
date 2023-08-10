@@ -8,7 +8,7 @@ export const getPokemonTypesWithInteractions = async (): Promise<PokemonTypesWit
     const { data, error } = await supabase
         .from('pokemon_types')
         .select(`
-            name,
+            *,
             pokemon_types_interactions!type_id(interaction_type_id(name))
         `);
 

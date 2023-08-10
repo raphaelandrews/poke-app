@@ -7,9 +7,7 @@ export const getPokemonGenerations = async (): Promise<PokemonGenerations[]> => 
 
     const { data, error } = await supabase
         .from('pokemon_generations')
-        .select(`
-            generation
-        `);
+        .select('*');
 
     if (error) {
         console.error('Error fetching generations:', error);

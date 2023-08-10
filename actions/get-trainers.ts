@@ -1,17 +1,20 @@
 import { supabaseClient } from '@/utils/supabaseClient';
 
-import { PokemonAbilities } from '@/types';
+import { Trainers } from '@/types';
 
-export const getPokemonAbilities = async (): Promise<PokemonAbilities[]> => {
+export const getTrainers = async (): Promise<Trainers[]> => {
     const supabase = supabaseClient();
 
     const { data, error } = await supabase
-        .from('pokemon_abilities')
-        .select('*');
+        .from('trainers')
+        .select(`
+            *,
+            avatars(*)
+        `);
 
     if (error) {
         console.error('Error fetching abilities:', error);
     }
-
+console.log(data)
     return data || [];
 }

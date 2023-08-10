@@ -7,9 +7,7 @@ export const getPokemonSpecies = async (): Promise<PokemonSpecies[]> => {
 
     const { data, error } = await supabase
         .from('pokemon_species')
-        .select(`
-            name
-        `);
+        .select('*');
 
     if (error) {
         console.error('Error fetching species:', error);

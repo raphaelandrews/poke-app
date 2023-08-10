@@ -7,9 +7,7 @@ export const getPokemonEggs = async (): Promise<PokemonEggs[]> => {
 
     const { data, error } = await supabase
         .from('pokemon_eggs')
-        .select(`
-            name
-        `);
+        .select('*');
 
     if (error) {
         console.error('Error fetching eggs:', error);

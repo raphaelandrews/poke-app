@@ -1,87 +1,30 @@
-import prisma from "@/lib/prismadb";
-import { PokemonWithTypes } from "@/types";
+import { supabaseClient } from '@/utils/supabaseClient';
 
-export async function getPokemons(): Promise<PokemonWithTypes[]> {
-    try {
-        const pokemons = await prisma.pokemon.findMany({
-            include: {
-                types: true,
-                eggs: true,
-                abilities: true,
-                species: true,
-                caughtPokemons: true,
-            },
-        });
+import { Pokemons } from '@/types';
 
-        return pokemons;
-    } catch (error: any) {
-        throw new Error('Error fetching Pokemon', error);
+export const getPokemons = async (): Promise<Pokemons[]> => {
+    const supabase = supabaseClient();
+
+    const { data, error } = await supabase
+        .from('pokemons')
+        .select(`
+            *,
+            pokemon_types(*),
+            pokemon_eggs(*),
+            pokemon_abilities(*),
+            pokemon_generations(*),
+            pokemon_species(*),
+            pokemon_evolutions!pokemon_id(
+                first_next_evolution_id(*), 
+                second_next_evolution_id(*),
+                first_previous_evolution_id(*),
+                second_previous_evolution_id(*)
+            )
+        `);
+
+    if (error) {
+        console.error('Error fetching pokemons:', error);
     }
-}
-
-export async function getPokemon(params: string) {
-    const pokemonId = params;
-
-    try {
-        const pokemon = await prisma.pokemon.findUnique({
-            where: {
-                id: pokemonId,
-            },
-            include: {
-                types: {
-                    select: {
-                        id: true,
-                        name: true,
-                        resistance: true,
-                        weakness: true,
-                        pokemons: true,
-                    },
-                },
-                eggs: {
-                    select: {
-                        id: true,
-                        name: true,
-                        pokemons: true,
-                    },
-                },
-                abilities: {
-                    select: {
-                        id: true,
-                        name: true,
-                        pokemons: true,
-                    },
-                },
-                species: {
-                    select: {
-                        id: true,
-                        name: true,
-                        pokemons: true,
-                    },
-                },
-                caughtPokemons: {
-                    select: {
-                        id: true,
-                        level: true,
-                        xp: true,
-                        hp: true,
-                        attack: true,
-                        defense: true,
-                        specialAttack: true,
-                        specialDefense: true,
-                        speed: true,
-                        user: true,
-                        pokemon: true,
-                    },
-                },
-            },
-        });
-
-        if (!pokemon) {
-            return null;
-        }
-
-        return pokemon;
-    } catch (error: any) {
-        throw new Error('Error fetching Pokemon', error);
-    }
+    console.log(data);
+    return data || [];
 }

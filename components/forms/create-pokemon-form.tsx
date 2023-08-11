@@ -2,11 +2,13 @@
 
 import * as z from "zod"
 import axios from "axios";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from '@clerk/clerk-react';
 
+import { supabaseClientAuth } from '@/utils/supabaseClient';
 import { useToast } from "@/hooks/use-toast";
 
 import { Input } from "@/components/ui/input";
@@ -19,6 +21,7 @@ import {
     FormMessage
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import { Pokemons } from "@/types";
 
 const formSchema = z.object({
     name: z.string(),
@@ -33,17 +36,20 @@ const formSchema = z.object({
     speed: z.number(),
     sprite: z.string(),
     thumbnail: z.string(),
-    previousEvolutionIds: z.array(z.string()),
-    nextEvolutionIds: z.array(z.string()),
-    typeIds: z.array(z.string()),
-    eggIds: z.array(z.string()),
-    abilityIds: z.array(z.string()),
-    generationId: z.string(),
-    speciesId: z.string(),
+    typesIds: z.array(z.string()),
+    eggsIds: z.array(z.string()),
+    abilitiesIds: z.array(z.string()),
+    generationId: z.number(),
+    specieId: z.number(),
+    firstNextEvolutionId: z.number(),
+    secondNextEvolutionId: z.number(),
+    firstPreviousEvolutionId: z.number(),
+    secondPreviousEvolutionId: z.number(),
 });
 
 
 const CreatePokemonForm = () => {
+    const { getToken } = useAuth();
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const { toast } = useToast();
@@ -63,20 +69,100 @@ const CreatePokemonForm = () => {
             speed: 0,
             sprite: '',
             thumbnail: '',
-            previousEvolutionIds: [''],
-            nextEvolutionIds: [''],
-            typeIds: [''],
-            eggIds: [''],
-            abilityIds: [''],
-            generationId: '',
-            speciesId: '',
+            generationId: 0,
+            specieId: 0,
+            typesIds: [''],
+            eggsIds: [''],
+            abilitiesIds: [''],
+            firstNextEvolutionId: 0,
+            secondNextEvolutionId: 0,
+            firstPreviousEvolutionId: 0,
+            secondPreviousEvolutionId: 0,
         },
     });
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        console.log(values)
+        const supabaseAccessToken = await getToken({ template: 'supabase' });
+        const supabase = await supabaseClientAuth(supabaseAccessToken);
         try {
             setLoading(true);
-            const response = await axios.post('/api/pokemons', values)
+            const { data: pokemons, error: pokemonsError } = await supabase
+                .from('pokemons')
+                .insert({
+                    name: values.name,
+                    description: values.description,
+                    height: values.height,
+                    weight: values.weight,
+                    hp: values.hp,
+                    attack: values.attack,
+                    defense: values.defense,
+                    special_attack: values.specialAttack,
+                    special_defense: values.specialDefense,
+                    speed: values.speed,
+                    sprite: values.sprite,
+                    thumbnail: values.thumbnail,
+                    generation_id: values.generationId,
+                    specie_id: values.specieId,
+                })
+                .select()
+
+            if (pokemonsError) {
+                console.error(pokemonsError)
+                return (
+                    toast({
+                        title: "Error registering Pokemon",
+                    })
+                )
+            }
+            console.log(pokemons)
+            const pokemonsId = pokemons as unknown as Pokemons[];
+            console.log(pokemonsId)
+            if (pokemonsId != null) {
+                const { data: evolutions, error: evolutionsError } = await supabase
+                    .from('pokemon_evolutions')
+                    .insert({
+                        pokemon_id: pokemonsId[0].id,
+                        first_next_evolution_id: values.firstNextEvolutionId,
+                        second_next_evolution_id: values.secondNextEvolutionId,
+                        first_previous_evolution_id: values.firstPreviousEvolutionId,
+                        second_previous_evolution_id: values.secondPreviousEvolutionId,
+                    })
+
+                const typesIds = values.typesIds.map(Number);
+                const eggsIds = values.eggsIds.map(Number);
+                const abilitiesIds = values.abilitiesIds.map(Number);
+                console.log(typesIds, eggsIds, abilitiesIds)
+                const { data: types, error: typesError } = await supabase
+                    .from('pokemon_to_pokemon_types')
+                    .insert(typesIds.map(typeId => ({
+                        pokemon_id: pokemonsId[0].id,
+                        pokemon_type_id: typeId,
+                    })));
+                if (typesError) {
+                    console.log(typesError)
+                }
+                const { data: eggs, error: eggsError } = await supabase
+                    .from('pokemon_to_pokemon_eggs')
+                    .insert(eggsIds.map(eggId => ({
+                        pokemon_id: pokemonsId[0].id,
+                        pokemon_egg_id: eggId,
+                    })));
+                if (eggsError) {
+                    console.log(eggsError)
+                }
+                const { data: abilities, error: abilitiesError } = await supabase
+                    .from('pokemon_to_pokemon_abilities')
+                    .insert(abilitiesIds.map(abilityId => ({
+                        pokemon_id: pokemonsId[0].id,
+                        pokemon_ability_id: abilityId,
+                    })));
+                if (abilitiesError) {
+                    console.log(abilitiesError)
+                }
+            }
+
+
             router.refresh();
             toast({
                 title: "Pokemon registered",
@@ -181,17 +267,17 @@ const CreatePokemonForm = () => {
                         />
                         <FormField
                             control={form.control}
-                            name="eggIds"
+                            name="eggsIds"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Eggs</FormLabel>
                                     <FormControl>
                                         <Input
-                                            id="eggIds"
+                                            id="eggsIds"
                                             type="text"
                                             disabled={loading}
                                             placeholder="Monster, Grass"
-                                            value={arrayToString(field.value)}
+                                            value={Array.isArray(field.value) ? field.value.join(', ') : field.value}
                                             onChange={(e) => {
                                                 const newValue = e.target.value.split(", ");
                                                 field.onChange(newValue);
@@ -204,18 +290,18 @@ const CreatePokemonForm = () => {
                         />
                         <FormField
                             control={form.control}
-                            name="abilityIds"
+                            name="abilitiesIds"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Abilities</FormLabel>
                                     <FormControl>
                                         <Input
-                                            id="abilityIds"
+                                            id="abilitiesIds"
                                             type="text"
                                             disabled={loading}
                                             placeholder="Overgrow, Chlorophyll"
                                             required
-                                            value={arrayToString(field.value)}
+                                            value={Array.isArray(field.value) ? field.value.join(', ') : field.value}
                                             onChange={(e) => {
                                                 const newValue = e.target.value.split(", ");
                                                 field.onChange(newValue);
@@ -235,11 +321,18 @@ const CreatePokemonForm = () => {
                                     <FormControl>
                                         <Input
                                             id="generationId"
-                                            type="text"
+                                            type="number"
                                             disabled={loading}
                                             placeholder="1"
+                                            min={0}
+                                            step="any"
                                             required
-                                            {...field} />
+                                            value={Number(field.value)}
+                                            onChange={(e) => {
+                                                const newValue = parseFloat(e.target.value);
+                                                field.onChange(newValue);
+                                            }}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -409,19 +502,22 @@ const CreatePokemonForm = () => {
                         <h2 className="text-lg font-semibold">Info</h2>
                         <FormField
                             control={form.control}
-                            name="previousEvolutionIds"
+                            name="firstNextEvolutionId"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Previous Evolutions</FormLabel>
+                                    <FormLabel>1st Next Evolution</FormLabel>
                                     <FormControl>
                                         <Input
-                                            id="previousEvolutionIds"
-                                            type="text"
+                                            id="firstNextEvolutionId"
+                                            type="number"
                                             disabled={loading}
-                                            placeholder="Previous Evolutions"
-                                            value={arrayToString(field.value)}
+                                            placeholder="1st Next Evolution"
+                                            min={0}
+                                            step="any"
+                                            required
+                                            value={Number(field.value)}
                                             onChange={(e) => {
-                                                const newValue = e.target.value.split(", ");
+                                                const newValue = parseFloat(e.target.value);
                                                 field.onChange(newValue);
                                             }}
                                         />
@@ -432,19 +528,74 @@ const CreatePokemonForm = () => {
                         />
                         <FormField
                             control={form.control}
-                            name="nextEvolutionIds"
+                            name="secondNextEvolutionId"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Next Evolutions</FormLabel>
+                                    <FormLabel>2nd Next Evolution</FormLabel>
                                     <FormControl>
                                         <Input
-                                            id="nextEvolutionIds"
-                                            type="text"
+                                            id="secondNextEvolutionId"
+                                            type="number"
                                             disabled={loading}
-                                            placeholder="Ivysaur, Venusaur"
-                                            value={arrayToString(field.value)}
+                                            placeholder="2nd Next Evolution"
+                                            min={0}
+                                            step="any"
+                                            required
+                                            value={Number(field.value)}
                                             onChange={(e) => {
-                                                const newValue = e.target.value.split(", ");
+                                                const newValue = parseFloat(e.target.value);
+                                                field.onChange(newValue);
+                                            }}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="firstPreviousEvolutionId"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>1st Previous Evolution</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            id="firstPreviousEvolutionId"
+                                            type="number"
+                                            disabled={loading}
+                                            placeholder="1st Previous Evolution"
+                                            min={0}
+                                            step="any"
+                                            required
+                                            value={Number(field.value)}
+                                            onChange={(e) => {
+                                                const newValue = parseFloat(e.target.value);
+                                                field.onChange(newValue);
+                                            }}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="secondPreviousEvolutionId"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>2nd Previous Evolution</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            id="secondPreviousEvolutionId"
+                                            type="number"
+                                            disabled={loading}
+                                            placeholder="2nd Previous Evolution"
+                                            min={0}
+                                            step="any"
+                                            required
+                                            value={Number(field.value)}
+                                            onChange={(e) => {
+                                                const newValue = parseFloat(e.target.value);
                                                 field.onChange(newValue);
                                             }}
                                         />
@@ -493,18 +644,18 @@ const CreatePokemonForm = () => {
                         />
                         <FormField
                             control={form.control}
-                            name="typeIds"
+                            name="typesIds"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Types</FormLabel>
                                     <FormControl>
                                         <Input
-                                            id="typeIds"
+                                            id="typesIds"
                                             type="text"
                                             disabled={loading}
                                             placeholder="Grass, Poison"
                                             required
-                                            value={arrayToString(field.value)}
+                                            value={Array.isArray(field.value) ? field.value.join(', ') : field.value}
                                             onChange={(e) => {
                                                 const newValue = e.target.value.split(", ");
                                                 field.onChange(newValue);
@@ -517,18 +668,25 @@ const CreatePokemonForm = () => {
                         />
                         <FormField
                             control={form.control}
-                            name="speciesId"
+                            name="specieId"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Species</FormLabel>
+                                    <FormLabel>Specie</FormLabel>
                                     <FormControl>
                                         <Input
-                                            id="speciesId"
-                                            type="text"
+                                            id="specieId"
+                                            type="number"
                                             disabled={loading}
                                             placeholder="Seed"
+                                            min={0}
+                                            step="any"
                                             required
-                                            {...field} />
+                                            value={Number(field.value)}
+                                            onChange={(e) => {
+                                                const newValue = parseFloat(e.target.value);
+                                                field.onChange(newValue);
+                                            }}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

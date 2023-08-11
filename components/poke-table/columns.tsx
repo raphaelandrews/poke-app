@@ -1,14 +1,10 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Pokemon, PokemonType } from "@prisma/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Pokemons } from "@/types";
 
-interface PokemonWithTypes extends Pokemon {
-  types: PokemonType[];
-}
-
-export const columns: ColumnDef<PokemonWithTypes>[] = [
+export const columns: ColumnDef<Pokemons>[] = [
   {
     accessorKey: "name",
     header: "Name",
@@ -30,14 +26,14 @@ export const columns: ColumnDef<PokemonWithTypes>[] = [
     }
   },
   {
-    accessorKey: "typeId",
+    accessorKey: "pokemon_types",
     header: "Types",
     cell: ({ row }) => {
-    const { types } = row.original;
+    const { pokemon_types } = row.original;
 
       return (
         <div className="flex gap-1">
-          {types.map((type: { name: string | undefined }) => (
+          {pokemon_types?.map((type: { name: string | undefined }) => (
             <Avatar key={type.name} className="w-5 h-5">
               <AvatarImage
                 src={`https://raw.githubusercontent.com/raphaelandrews/table-crud-nextjs/f47d73995f8fcc6a44f2848caeace9725454937b/public/images/pokemons-types-icons/${type?.name?.toLowerCase()}.svg`}
@@ -54,13 +50,23 @@ export const columns: ColumnDef<PokemonWithTypes>[] = [
   {
     accessorKey: "height",
     header: "Height",
+    cell: ({ row }) => {
+      return (
+         <div>{row.original.height} m</div>
+      )
+    }
   },
   {
     accessorKey: "weight",
     header: "Weight",
+    cell: ({ row }) => {
+      return (
+         <div>{row.original.weight} kg</div>
+      )
+    }
   },
   {
-    accessorKey: "id",
-    header: "ID",
+    accessorKey: "pokemon_generations.generation",
+    header: "Generation",
   },
 ]

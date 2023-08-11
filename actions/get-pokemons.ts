@@ -25,6 +25,6 @@ export const getPokemons = async (): Promise<Pokemons[]> => {
     if (error) {
         console.error('Error fetching pokemons:', error);
     }
-    console.log(data);
+    
     return data || [];
 }

@@ -1,5 +1,5 @@
 import CreatePokemonForm from "@/components/forms/create-pokemon-form";
-import CreatePokemonTypeForm from "@/components/forms/create-pokemon-type";
+import CreatePokemonTypeForm from "@/components/forms/create-pokemon-type-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

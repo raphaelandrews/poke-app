@@ -7,6 +7,9 @@ export const supabaseClientAuth = async (supabaseToken) => {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
         {
             global: { headers: { Authorization: `Bearer ${supabaseToken}` } },
+        },
+        {
+            auth: { persistSession: false },
         }
     );
     return supabase;

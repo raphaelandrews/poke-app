@@ -24,6 +24,8 @@ export interface Pokemons {
     thumbnail: string;
     weight: string;
     xp: number;
+    pokemon_types: PokemonTypes[];
+    pokemon_generations: PokemonGenerations;
 }
 
 export interface PokemonTypesWithInteractions {

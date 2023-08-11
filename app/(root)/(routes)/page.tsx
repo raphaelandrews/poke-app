@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from '@clerk/clerk-react';
+
 import { supabaseClientAuth } from '@/utils/supabaseClient';
 
 import { columns } from "@/components/poke-table/columns";
@@ -9,18 +10,19 @@ import { DataTable } from "@/components/poke-table/data-table";
 import { Button } from "@/components/ui/button";
 import usePokemonModal from "@/hooks/use-create-pokemon-modal";
 
-import { getCaughtPokemons } from "@/actions/get-caught-pokemons";
+import { getPokemons } from "@/actions/get-pokemons";
+import { Pokemons } from "@/types";
 
 export default function Home() {
   const { getToken } = useAuth();
-  const [pokemon, setPokemon] = useState<any[] | null>([])
+  const [pokemon, setPokemon] = useState<Pokemons[]>([]);
   const fetchData = async () => {
     const supabaseAccessToken = await getToken({ template: 'supabase' });
     const supabase = await supabaseClientAuth(supabaseAccessToken);
     const { data, error } = await supabase.from('_PokemonEvolutions')
       .select(`previousEvolutionId`)
     console.log(data)
-    setPokemon(data);
+    
     if (!data) return [];
 
     return data.map((item) => ({
@@ -28,8 +30,16 @@ export default function Home() {
     }))
   };
 
-const pokes = getCaughtPokemons();
 
+  const getData = async () => {
+    const pokemons = await getPokemons();
+    setPokemon(pokemons);
+    console.log(pokemons)
+  }
+
+  useEffect(() => {
+    getData();
+  }, []);
   return (
     <>
       <h1
@@ -48,13 +58,11 @@ const pokes = getCaughtPokemons();
         Pokétable
       </h1>
 
-      <Button onClick={() => pokes}>
+      <Button onClick={() => 'pokes'}>
         Create Pokemon
       </Button>
-      {pokemon?.map((p) => (
-        <div key={p.url}>{p.url}</div>
-      ))}
-      {/*<DataTable columns={columns} data={pokemons} />*/}
+
+      <DataTable columns={columns} data={pokemon} />
     </>
   )
 }

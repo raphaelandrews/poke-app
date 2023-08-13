@@ -26,10 +26,7 @@ export default async function RootLayout({
         <body className={inter.className}>
           <Toaster />
           <CreatePokemonModal />
-          <Header />
-          <main className="container min-h-screen pb-10">
             {children}
-          </main>
         </body>
       </html>
     </ClerkProvider>

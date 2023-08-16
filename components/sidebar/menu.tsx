@@ -24,7 +24,6 @@ import {
     Users
 } from "lucide-react";
 
-
 const Menu = () => {
     const router = useRouter();
     const sidebar = useSidebar();

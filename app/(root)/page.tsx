@@ -16,7 +16,7 @@ import { Pokemons } from "@/types";
 export default function Home() {
   const { getToken } = useAuth();
   const [pokemon, setPokemon] = useState<Pokemons[]>([]);
-  const fetchData = async () => {
+  {/*const fetchData = async () => {
     const supabaseAccessToken = await getToken({ template: 'supabase' });
     const supabase = await supabaseClientAuth(supabaseAccessToken);
     const { data, error } = await supabase.from('_PokemonEvolutions')
@@ -28,41 +28,24 @@ export default function Home() {
     return data.map((item) => ({
       ...item.previousEvolutionId
     }))
-  };
+  };*/}
 
 
   const getData = async () => {
     const pokemons = await getPokemons();
     setPokemon(pokemons);
-    console.log(pokemons)
   }
 
   useEffect(() => {
-    getData();
+    
   }, []);
   return (
-    <>
-      <h1
-        className="
-          text-2xl 
-          md:text-3xl 
-          font-bold 
-          text-center 
-          mt-6
-          md:mt-8 
-          leading-tight 
-          lg:leading-[1.1] 
-          tracking-tighter
-        "
-      >
-        Pokétable
-      </h1>
-
+    <div className="w-11/12 max-w-[1800px] my-0 mx-auto pt-4 pb-20">
       <Button onClick={() => 'pokes'}>
         Create Pokemon
       </Button>
 
       <DataTable columns={columns} data={pokemon} />
-    </>
+    </div>
   )
 }

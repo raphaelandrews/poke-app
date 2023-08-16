@@ -2,14 +2,22 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import  useSidebar  from "@/hooks/use-sidebar";
 
-const Logo = () => {
+import { cn } from "@/lib/utils";
+import useSidebar from "@/hooks/use-sidebar";
+
+interface LogoProps {
+  className?: string;
+}
+
+const Logo: React.FC<LogoProps> = ({ className }) => {
   const router = useRouter();
   const sidebar = useSidebar();
 
   return (
-    <div className={`flex items-center gap-4 overflow-hidden ${sidebar.isOpen ? "px-2" : undefined}`}>
+    <div
+      className={cn("flex items-center gap-4 overflow-hidden", className)}
+    >
       <Image
         onClick={() => router.push('/')}
         className="w-8 cursor-pointer"
@@ -18,7 +26,16 @@ const Logo = () => {
         width="100"
         alt="Logo"
       />
-      <div className={`text-lg font-bold text-primary dark:text-primaryDark ${sidebar.isOpen ? "block" : "hidden"}`}>PokéApp</div>
+      <div
+        className={`
+          text-lg 
+          font-bold 
+          text-primary 
+          dark:text-primaryDark 
+          ${sidebar.isOpen ? "hidden  md:block" : "hidden"}`
+        }>
+        PokéApp
+      </div>
     </div>
 
   );
